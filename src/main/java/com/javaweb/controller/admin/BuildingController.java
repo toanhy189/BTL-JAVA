@@ -38,9 +38,7 @@ public class BuildingController {
         mav.addObject("modelSearch", buildingSearchRequest);
 
         List<BuildingSearchResponse> res = buildingService.findAll(buildingSearchRequest, PageRequest.of(buildingSearchRequest.getPage() - 1, buildingSearchRequest.getMaxPageItems()));
-//        BuildingSearchResponse buildingSearchResponse = new BuildingSearchResponse();
-//        buildingSearchResponse.setListResult(res);
-//        buildingSearchResponse.setTotalItems(buildingService.countTotalItem(res));
+
         BuildingSearchResponse resultModel = new BuildingSearchResponse();
         resultModel.setListResult(res);
         resultModel.setTotalItems(buildingService.countTotalItem(res));

@@ -29,10 +29,7 @@ public class AssignmentBuildingServiceImpl implements AssignmentBuildingService 
     // Phương thức xóa các gán (assignment) theo danh sách ID của tòa nhà (buildings)
     @Override
     public void deleteByBuildingsIn(List<Long> ids) {
-//        for (Long id : ids) {
-//            BuildingEntity buildingEntity = buildingRepository.findById(id).get();
-//            assignmentBuildingRepository.deleteByBuildings(buildingEntity);
-//        }
+
         assignmentBuildingRepository.deleteByBuildingsIdIn(ids);
     }
 

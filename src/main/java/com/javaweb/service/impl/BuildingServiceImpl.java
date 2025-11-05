@@ -180,14 +180,20 @@ public class BuildingServiceImpl implements BuildingService {
         assignmentBuildingService.deleteByBuildingsIn(ids);
         for(Long id:ids) buildingRepository.deleteById(id);
     }
+//    Trả về danh sách tất cả nhân viên có role là “STAFF”, và đánh dấu những người nào đã được gán cho tòa nhà có id = buildingId.
     public ResponseDTO listStaffs(Long buildingId) {
+//       Lấy thực thể tòa nhà từ cơ sở dữ liệu theo buildingId.
         BuildingEntity building =buildingRepository.findById(buildingId).get();
+//        Lấy toàn bộ nhân viên đang hoạt động (status = 1) và có vai trò STAFF.
         List<UserEntity> staffs =userRepository.findByStatusAndRoles_Code(1,"STAFF");
+//        Lấy danh sách nhân viên hiện đã được gán cho tòa nhà này.
         List<UserEntity> staffAssigment = building.getUserEntities();
+//        Chuẩn bị danh sách kết quả (staffResponseDTOS) để trả về cho client (frontend).
         List< StaffResponseDTO> staffResponseDTOS=new ArrayList<>();
         ResponseDTO responseDTO = new ResponseDTO();
-
+//        Duyệt qua từng nhân viên (it) trong danh sách staffs
         for(UserEntity it : staffs){
+//            Với mỗi nhân viên, tạo một StaffResponseDTO để chứa thông tin gửi ra JSON:
             StaffResponseDTO staffResponseDTO = new StaffResponseDTO();
             staffResponseDTO.setFullName(it.getFullName());
             staffResponseDTO.setStaffId(it.getId());

@@ -28,11 +28,7 @@ public class RentAreaServiceImpl implements RentAreaService {
     @Override
     public void deleteByBuildings(List<Long> ids)
     {
-//        for(Long it : ids)
-//        {
-//            BuildingEntity buildingEntity = BuildingRepository.findById(Long.valueOf(it)).get();
-//            rentAreaRepository.deleteByBuildingId(buildingEntity);
-//        }
+
         rentAreaRepository.deleteByBuildingId_IdIn(ids);
     }
 

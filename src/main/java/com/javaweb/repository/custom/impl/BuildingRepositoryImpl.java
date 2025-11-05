@@ -162,12 +162,14 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
 //    }
     public static void queryNormal(BuildingSearchBuilder buildingSearchBuilder, StringBuilder where) {
         try {
+//            Lấy toàn bộ các thuộc tính (fields) trong class BuildingSearchBuilder bằng Java Reflection.
             Field[] fields = BuildingSearchBuilder.class.getDeclaredFields();
 
             for (Field item : fields) {
+//                Cho phép truy cập vào field kể cả khi nó là private.
                 item.setAccessible(true);
                 String fieldName = item.getName();
-
+//                Bỏ qua các field đặc biệt
                 if (!fieldName.equals("staffId")
                         && !fieldName.equals("typeCode")
                         && !fieldName.startsWith("area")
@@ -176,7 +178,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
                     Object value = item.get(buildingSearchBuilder);
                     if (value != null && !value.toString().isEmpty()) {
 
-                        // 🔥 Ánh xạ tên field trong Java sang tên cột trong DB
+                        //  Ánh xạ tên field trong Java sang tên cột trong DB
                         String columnName = convertFieldToColumn(fieldName);
 
                         if (item.getType().getName().equals("java.lang.Long")

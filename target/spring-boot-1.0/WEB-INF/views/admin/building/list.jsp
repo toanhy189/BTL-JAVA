@@ -439,61 +439,99 @@
 		</div>
 	</div>
   <script>
+//Chức năng giao toa nhà
+//Hàm gọi bảng giao tòa nhà
 		function assingmentBuilding(buildingId) {
+            // Mở modal (hộp thoại) có id="assingmentBuildingModal".
 			$('#assingmentBuildingModal').modal();
+            // Gọi hàm loadStaff(buildingId) để tải danh sách nhân viên từ server qua API.
             loadStaff(buildingId);
+// Gán buildingId vào input hidden có id="buildingId" để sau này khi “Lưu” có thể biết đang thao tác với tòa nhà nào.
 			$('#buildingId').val(buildingId);
 		}
-
+// hàm loadstaff(Hiển thị bảng giao tòa nhà)
         function loadStaff(buildingId){
              $.ajax({
-
+// Gửi request GET đến API /api/buildings/{id}/staffs để lấy danh sách nhân viên thuộc tòa nhà có id = buildingId
             url:"${buildingAPI}/"+buildingId+'/staffs' ,
+            // Sử dụng phương thức GET (lấy dữ liệu).
             type: "GET",
-            // data: JSON.stringify(data),
-            // contentType: "application/json",
+            // Kết quả trả về là JSON.
             dataType: "json",
+            // Hàm chạy khi request thành công.
             success: function (response) {
                 var row='';
+//                 Hàm $.each() là hàm lặp (loop) của jQuery — nó đi qua từng phần tử trong mảng response.data.
+// Với mỗi phần tử, nó sẽ tự động truyền vào 2 tham số:
+                // Mảng chứa danh sách nhân viên được backend trả về (mỗi item có staffId, fullName, checked).
                 $.each(response.data,function (index,item){
+                    //Lấy ra xâu được lấy từ DB
+                    //ví dụ:
+                    // <tr>
+//   <td className="text-center"><input type="checkbox" value="1" id="checkbox_1" checked /></td>
+//   <td className="text-center">Nguyễn Văn A</td>
+// </tr>
                     row+='<tr>';
                     row += '<td class="text-center">' + '<input type="checkbox" value="' + item.staffId + '" id="checkbox_' + item.staffId + '" ' + item.checked + ' />' + '</td>';
                     row += '<td class="text-center">' + item.fullName + '</td>';
 
                     row+='</tr>';
                 });
+               // đưa toàn bộ chuỗi HTML row vào phần thân của bảng có id="staffList".
                 $('#staffList tbody').html(row);
                 console.log("Success");
             },
+            // Hàm chạy khi request  không thành công.
             error: function (response) {
+                // in ra điều hướng trang
                 console.log("failed");
                 window.location.href = "<c:url value="/admin/building-list?message=error" />";
                 console.log(response);
             }
         });
         }
-
+//giao tòa nhà
 		$('#btnassingmentBuilding').click(function (e) {
+            // ngăn hành vi mặc định (ví dụ nếu là nút trong form thì form sẽ không bị submit reload trang).
 			e.preventDefault();
+// Tạo object data rỗng.
 			var data = {};
+            // Gán thuộc tính buildingId = giá trị lấy từ input hidden #buildingId (id của tòa nhà đang giao).
 			data['buildingId'] = $('#buildingId').val();
+            // $('#staffList'): Chọn bảng chứa danh sách nhân viên
+            // .find('tbody input[type=checkbox]:checked'): Tìm tất cả ô checkbox đã được tick
+			// .map(function(){ return $(this).val(); }) Lấy giá trị (value) của từng checkbox
+			// .get(): Chuyển từ jQuery object sang mảng JavaScript thực
 			var staffs = $('#staffList').find('tbody input[type =checkbox]:checked').map(function () {
 				return $(this).val();
 			}).get();
+//kết quả lấy dc VD staffs = [1, 3, 5]
+//Gộp dữ liệu vào data
+//VD:{
+//   buildingId: 5,
+//   staffs: [1, 3, 5]
+// }
 			data['staffs'] = staffs;
+            // Kiểm tra và gọi hàm Ajax
+            // Nếu có ít nhất 1 nhân viên được chọn → gọi hàm assignment(data) để gửi lên server.
             if(data['staffs']!=''){
+                // gọi hàm assignment
 assignment(data);
             }
 			console.log("OK")
 		})
-
+// hàm assignment
 		function assignment(data){
              $.ajax({
-
+// API đích để gửi dữ liệu (/api/building/assignment)
             url:"${buildingAPI}/"+'assignment' ,
+            // Gửi theo phương thức POST
             type: "POST",
+            // Dữ liệu được gửi đi, ở đây là data (chuyển sang JSON)
             data: JSON.stringify(data),
+            // Thông báo cho server biết dữ liệu gửi đi là JSON
             contentType: "application/json",
+            // Kỳ vọng server trả về kiểu JSON
             dataType: "json",
             success: function (response) {
 

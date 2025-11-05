@@ -14,8 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+//Kết hợp @Controller + @ResponseBody. Mọi phương thức trả về Java object sẽ được tự động chuyển thành JSON.
 @RestController(value = "buildingAPIOfAdmin")
+//Base URL cho tất cả endpoint trong class: /api/building
 @RequestMapping("/api/building")
 @Transactional
 public class BuildingAPI {
@@ -45,21 +46,18 @@ public class BuildingAPI {
     /* bach123456789 */
     @DeleteMapping("/{ids}")
     public void deleteBuilding(@PathVariable List<Long> ids) { buildingService.deleteBuildings(ids); }
-//    @DeleteMapping
-//    public void deleteBuilding(@RequestParam("ids") List<Long> ids) { // <<< Sửa thành @RequestParam("ids")
-//        buildingService.deleteBuildings(ids);
-//    }
 
+//    URL: GET /api/building/{id}/staffs → ví dụ /api/building/5/staffs
+//Mục đích: Lấy danh sách nhân viên khả dụng và đánh dấu ai đã được gán cho building id.
    @GetMapping("{id}/staffs")
+//    @PathVariable Long id từ URL.
     public ResponseDTO loadStaffs(@PathVariable Long id){
+//       Lấy danh sách tất cả staff
         ResponseDTO result=buildingService.listStaffs(id);
         return result;
    }
 
-//    @PostMapping("/assignment")
-//    public void updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO) {
-//        assignmentBuildingService.addAssignmentBuildingEntity(assignmentBuildingDTO);
-//    }
+
 @PostMapping("/assignment")
 public ResponseDTO updateAssignmentBuilding(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO) {
     assignmentBuildingService.addAssignmentBuildingEntity(assignmentBuildingDTO);
